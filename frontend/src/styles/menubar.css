@@ -1,7 +1,8 @@
 /* src/styles/menubar.css */
 
 .menubar {
-  @apply flex items-center justify-between bg-yellow-400 px-6 py-4 shadow;
+  @apply flex items-center justify-between px-6 py-4 shadow;
+  
 }
 
 .menubar-logo {
@@ -10,6 +11,7 @@
 
 .menubar-links {
   @apply flex items-center space-x-4;
+  margin-right: 1%
 }
 
 .menubar-link {
@@ -22,4 +24,54 @@
 
 .menubar-button {
   @apply bg-black text-yellow-400 px-3 py-1 rounded font-semibold;
+}
+
+
+
+
+.menubar{
+   background: #FCD535;
+}
+.menubar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0.75rem 2rem; /* slim and neat */
+
+}
+
+.menubar-logo {
+  font-weight: 600;
+  font-size: 1.425rem;
+  color: #000;
+}
+
+.menubar-links {
+  display: flex;
+  gap: 1.25rem;
+}
+
+
+.menubar-button {
+  text-decoration: none;
+  color: #000;
+  padding: 0.3rem 0.8rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.menubar-link:hover,
+.menubar-button:hover {
+  background: rgba(255, 255, 255, 0.452);
+}
+
+.menubar-link.active {
+  font-weight: bold;
+  color: #fad027;
 }

@@ -16,3 +16,25 @@ body,
 .animate-marquee {
   animation: marquee 30s linear infinite;
 }
+
+@keyframes drift {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(5px, -8px) rotate(1deg) scale(1.01);
+  }
+  50% {
+    transform: translate(-4px, 5px) rotate(-1deg) scale(1.02);
+  }
+  75% {
+    transform: translate(4px, -6px) rotate(0.5deg) scale(1.01);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(0deg) scale(1);
+  }
+}
+
+.drift {
+  animation: drift 12s ease-in-out infinite;
+}

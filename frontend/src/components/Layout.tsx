@@ -1,4 +1,4 @@
-// src/components/Layout.tsx
+// ✅ src/components/Layout/Layout.tsx
 
 import React from 'react';
 import { Outlet } from 'react-router-dom';
@@ -7,11 +7,11 @@ import Menubar from './Menubar';
 export default function Layout() {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* ✅ Menubar at the top */}
+      {/* ✅ Sticky menubar */}
       <Menubar />
 
-      {/* ✅ Page content */}
-      <main className="flex-1">
+      {/* ✅ Main content — adds padding so it doesn’t slide under the fixed navbar */}
+      <main className="flex-1 pt-20">
         <Outlet />
       </main>
     </div>

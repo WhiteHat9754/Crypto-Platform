@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useSession } from '../context/SessionProvider';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'; // ✅ Heroicons
 
 export default function Register() {
   const navigate = useNavigate();
   const { isLoggedIn, isLoading } = useSession();
 
+  const [searchParams] = useSearchParams();
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [countryCode, setCountryCode] = useState('US+1'); // 🇺🇸 Default unique value
+  const [showPassword, setShowPassword] = useState(false); // ✅ Show/hide toggle
+  const [countryCode, setCountryCode] = useState('US+1');
   const [phone, setPhone] = useState('');
   const [referralCode, setReferralCode] = useState('');
 
-  // ✅ Top 10 countries A-Z
   const countries = [
     { name: 'AE', code: '+971', flag: '🇦🇪' },
     { name: 'AU', code: '+61', flag: '🇦🇺' },
@@ -34,6 +37,14 @@ export default function Register() {
     }
   }, [isLoggedIn, isLoading, navigate]);
 
+  // ✅ Pre-fill email from ?email param
+  useEffect(() => {
+    const emailFromQuery = searchParams.get('email');
+    if (emailFromQuery) {
+      setEmail(emailFromQuery);
+    }
+  }, [searchParams]);
+
   if (isLoading) {
     return <div className="text-white p-4">Loading...</div>;
   }
@@ -50,7 +61,6 @@ export default function Register() {
       return;
     }
 
-    // ✅ Extract real dial code from unique value (ISO+Code)
     const dialCode = countryCode.replace(/^[A-Z]+/, '');
 
     try {
@@ -115,14 +125,28 @@ export default function Register() {
           required
         />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-4 p-3 rounded bg-gray-700 text-white"
-          required
-        />
+        {/* ✅ Password input with Heroicons eye toggle */}
+        <div className="relative mb-4">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 rounded bg-gray-700 text-white pr-10"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300"
+          >
+            {showPassword ? (
+              <EyeSlashIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </button>
+        </div>
 
         <div className="flex gap-2 mb-4">
           <select
