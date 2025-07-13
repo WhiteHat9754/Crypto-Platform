@@ -42,7 +42,7 @@ export default function Login() {
 
       if (response.status === 200) {
         loginSession(response.data.user);
-        navigate('/');
+        navigate('/dashboard');
       } else {
         alert('Invalid credentials.');
       }

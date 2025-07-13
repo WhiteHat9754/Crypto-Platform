@@ -1,0 +1,25 @@
+/* src/styles/menubar.css */
+
+.menubar {
+  @apply flex items-center justify-between bg-yellow-400 px-6 py-4 shadow;
+}
+
+.menubar-logo {
+  @apply text-xl font-bold;
+}
+
+.menubar-links {
+  @apply flex items-center space-x-4;
+}
+
+.menubar-link {
+  @apply font-semibold;
+}
+
+.menubar-link.active {
+  text-decoration: underline;
+}
+
+.menubar-button {
+  @apply bg-black text-yellow-400 px-3 py-1 rounded font-semibold;
+}

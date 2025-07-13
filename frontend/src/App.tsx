@@ -8,7 +8,7 @@ import Wallet from './pages/Wallet';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
-
+import LandingPage from './pages/LandingPage';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 
@@ -17,8 +17,12 @@ export default function App() {
     <Routes>
       {/* ✅ USER ROUTES under Layout */}
       <Route element={<Layout />}>
+
+        {/* ✅ Public landing page */}
+        <Route path="/" element={<LandingPage />} />
+
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <Dashboard />
