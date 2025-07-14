@@ -29,49 +29,55 @@
 
 
 
-.menubar{
-   background: #FCD535;
+/* ✅ Base Menubar container */
+.menubar {
+  @apply flex items-center justify-between px-6 py-4 shadow;
+  background: white; /* ✅ pure white background */
 }
+
+/* ✅ Inner container stays same */
 .menubar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0.75rem 2rem; /* slim and neat */
-
+  padding: 0.75rem 2rem;
 }
 
 .menubar-logo {
   font-weight: 600;
   font-size: 1.425rem;
-  color: #000;
+  color: #000; /* ✅ clear contrast on white */
 }
 
 .menubar-links {
   display: flex;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
-
+/* ✅ All nav links: look like buttons */
+.menubar-link,
 .menubar-button {
   text-decoration: none;
-  color: #000;
+  color: #000; /* ✅ visible on white bg */
   padding: 0.3rem 0.8rem;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.075);
+  background: rgba(0, 0, 0, 0.05); /* ✅ light pill effect */
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: background 0.1s ease;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .menubar-link:hover,
 .menubar-button:hover {
-  background: rgba(255, 255, 255, 0.452);
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .menubar-link.active {
-  font-weight: bold;
-  color: #fad027;
+  background: rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+   text-decoration: none; /* ✅ no underline! */
 }

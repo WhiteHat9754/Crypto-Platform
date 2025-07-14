@@ -55,17 +55,17 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <main className="main-wrapper">
+      <main className="main-wrapper bg-white flex items-center justify-center text-muted">
         <p className="text-muted">Loading...</p>
       </main>
     );
   }
 
   return (
-    <main className="main-wrapper">
-      <h2 className="heading-primary mb-6">
+    <main className="main-wrapper bg-white">
+      {/* <h2 className="heading-primary mb-6">
         Whitestone Capital
-      </h2>
+      </h2> */}
 
       {/* Wallet cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

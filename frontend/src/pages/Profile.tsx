@@ -8,14 +8,14 @@ export default function Profile() {
 
   if (isLoading) {
     return (
-      <main className="main-wrapper flex items-center justify-center text-muted">
+      <main className="main-wrapper bg-white flex items-center justify-center text-muted">
         Loading...
       </main>
     );
   }
 
   return (
-    <main className="main-wrapper">
+    <main className="main-wrapper bg-white">
       <h1 className="heading-primary mb-4">👤 Profile</h1>
       {user ? (
         <div className="space-y-2">

@@ -103,7 +103,7 @@ export default function Wallet() {
 
   if (!isLoggedIn) {
     return (
-      <main className="main-wrapper flex items-center justify-center text-muted">
+      <main className="main-wrapper flex bg-white items-center justify-center text-muted">
         Please log in to view your wallet.
       </main>
     );
@@ -116,7 +116,7 @@ export default function Wallet() {
   });
 
   return (
-    <main className="main-wrapper">
+    <main className="main-wrapper bg-white">
       <h1 className="heading-primary mb-4">💰 Wallet</h1>
 
       {/* Universal actions */}

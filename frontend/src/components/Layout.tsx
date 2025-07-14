@@ -11,7 +11,7 @@ export default function Layout() {
       <Menubar />
 
       {/* ✅ Main content — adds padding so it doesn’t slide under the fixed navbar */}
-      <main className="flex-1 pt-20">
+      <main className="flex-1 pt-20 bg-white">
         <Outlet />
       </main>
     </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/menubar.css'; // ✅ Make sure path matches your structure!
+import '../styles/menubar.css'; 
 
 export default function Menubar() {
   const navigate = useNavigate();
