@@ -13,15 +13,15 @@ const userSchema = new mongoose.Schema(
 
     // ✅ Wallet balances for all coins
     balance: {
-      BTC: { type: Number, default: 0 },
-      ETH: { type: Number, default: 0 },
-      USDT: { type: Number, default: 0 },
-      BNB: { type: Number, default: 0 },
-      XRP: { type: Number, default: 0 },
-      LTC: { type: Number, default: 0 },
-      DOGE: { type: Number, default: 0 },
-      TRX: { type: Number, default: 0 },
-      ADA: { type: Number, default: 0 },
+      BTC: { type: mongoose.Schema.Types.Decimal128, default: 0 },
+      ETH: { type: mongoose.Schema.Types.Decimal128, default: 0 },
+      USDT: { type: mongoose.Schema.Types.Decimal128, default: 0 },
+      BNB: { type: mongoose.Schema.Types.Decimal128, default: 0 },
+      XRP: { type: mongoose.Schema.Types.Decimal128, default: 0 },
+      LTC: { type: mongoose.Schema.Types.Decimal128, default: 0 },
+      DOGE: { type: mongoose.Schema.Types.Decimal128, default: 0 },
+      TRX: { type: mongoose.Schema.Types.Decimal128, default: 0 },
+      ADA: { type: mongoose.Schema.Types.Decimal128, default: 0 },
     },
 
     // ✅ Wallet addresses for each coin (optional)

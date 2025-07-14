@@ -7,8 +7,6 @@ exports.createPayment = async (req, res) => {
   const userId = req.session.userId;
   const { currency, amount } = req.body;
 
-  console.log('✅ Session userId:', userId);
-
   if (!userId) {
     console.log('❌ Unauthorized');
     return res.status(401).json({ message: 'Unauthorized' });

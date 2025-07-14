@@ -10,7 +10,6 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // ✅ Auto-redirect if already logged in
   useEffect(() => {
     if (!isLoading && isLoggedIn) {
       navigate('/');
@@ -18,11 +17,11 @@ export default function Login() {
   }, [isLoading, isLoggedIn, navigate]);
 
   if (isLoading) {
-    return <div className="text-white p-4">Loading...</div>;
+    return <div className="text-black p-4">Loading...</div>;
   }
 
   if (isLoggedIn) {
-    return null; // prevent flash of login form
+    return null;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,7 +36,7 @@ export default function Login() {
       const response = await axios.post(
         'http://localhost:5000/api/auth/login',
         { email, password },
-        { withCredentials: true } // ✅ this makes the session cookie work!
+        { withCredentials: true }
       );
 
       if (response.status === 200) {
@@ -53,19 +52,21 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-900">
+    <div className="flex items-center justify-center min-h-screen bg-white">
       <form
         onSubmit={handleSubmit}
-        className="bg-gray-800 p-8 rounded shadow-md w-full max-w-md"
+        className="backdrop-blur-lg bg-white/60 border border-white/40 shadow-xl rounded-xl p-8 w-full max-w-md"
       >
-        <h2 className="text-2xl mb-6 text-yellow-400 font-bold">Login</h2>
+        <h2 className="text-3xl mb-6 text-yellow-500 font-bold text-center">
+          Login
+        </h2>
 
         <input
           type="email"
           placeholder="Email Address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full mb-4 p-3 rounded bg-gray-700 text-white"
+          className="w-full mb-4 p-3 rounded bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-yellow-400"
           required
         />
 
@@ -74,7 +75,7 @@ export default function Login() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-4 p-3 rounded bg-gray-700 text-white"
+          className="w-full mb-4 p-3 rounded bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-yellow-400"
           required
         />
 
@@ -85,9 +86,9 @@ export default function Login() {
           Login
         </button>
 
-        <p className="text-gray-400 text-sm mt-4">
+        <p className="text-gray-600 text-sm mt-4 text-center">
           Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-yellow-400 hover:underline">
+          <Link to="/register" className="text-yellow-500 hover:underline">
             Sign up here
           </Link>
         </p>

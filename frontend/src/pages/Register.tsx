@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useSession } from '../context/SessionProvider';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'; // ✅ Heroicons
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 export default function Register() {
   const navigate = useNavigate();
   const { isLoggedIn, isLoading } = useSession();
-
   const [searchParams] = useSearchParams();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // ✅ Show/hide toggle
+  const [showPassword, setShowPassword] = useState(false);
   const [countryCode, setCountryCode] = useState('US+1');
   const [phone, setPhone] = useState('');
   const [referralCode, setReferralCode] = useState('');
@@ -37,7 +36,7 @@ export default function Register() {
     }
   }, [isLoggedIn, isLoading, navigate]);
 
-  // ✅ Pre-fill email from ?email param
+  // ✅ Pre-fill email if ?email param is present
   useEffect(() => {
     const emailFromQuery = searchParams.get('email');
     if (emailFromQuery) {
@@ -46,7 +45,7 @@ export default function Register() {
   }, [searchParams]);
 
   if (isLoading) {
-    return <div className="text-white p-4">Loading...</div>;
+    return <div className="text-black p-4">Loading...</div>;
   }
 
   if (isLoggedIn) {
@@ -91,19 +90,19 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-900">
+    <div className="flex items-center justify-center min-h-screen bg-white">
       <form
         onSubmit={handleSubmit}
-        className="bg-gray-800 p-8 rounded shadow-md w-full max-w-md"
+        className="backdrop-blur-lg bg-white/60 border border-white/40 shadow-xl rounded-xl p-8 w-full max-w-md"
       >
-        <h2 className="text-2xl mb-6 text-yellow-400 font-bold">Register</h2>
+        <h2 className="text-3xl mb-6 text-yellow-500 font-bold text-center">Register</h2>
 
         <input
           type="text"
           placeholder="First Name"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          className="w-full mb-4 p-3 rounded bg-gray-700 text-white"
+          className="w-full mb-4 p-3 rounded bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-yellow-400"
           required
         />
 
@@ -112,7 +111,7 @@ export default function Register() {
           placeholder="Last Name"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          className="w-full mb-4 p-3 rounded bg-gray-700 text-white"
+          className="w-full mb-4 p-3 rounded bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-yellow-400"
           required
         />
 
@@ -121,24 +120,23 @@ export default function Register() {
           placeholder="Email Address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full mb-4 p-3 rounded bg-gray-700 text-white"
+          className="w-full mb-4 p-3 rounded bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-yellow-400"
           required
         />
 
-        {/* ✅ Password input with Heroicons eye toggle */}
         <div className="relative mb-4">
           <input
             type={showPassword ? 'text' : 'password'}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 rounded bg-gray-700 text-white pr-10"
+            className="w-full p-3 rounded bg-gray-100 text-black pr-10 focus:outline-none focus:ring-2 focus:ring-yellow-400"
             required
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
           >
             {showPassword ? (
               <EyeSlashIcon className="h-5 w-5" />
@@ -152,7 +150,7 @@ export default function Register() {
           <select
             value={countryCode}
             onChange={(e) => setCountryCode(e.target.value)}
-            className="w-1/3 p-3 rounded bg-gray-700 text-white"
+            className="w-1/3 p-3 rounded bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-yellow-400"
             required
           >
             {countries.map((c) => (
@@ -167,7 +165,7 @@ export default function Register() {
             placeholder="Phone Number"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-2/3 p-3 rounded bg-gray-700 text-white"
+            className="w-2/3 p-3 rounded bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-yellow-400"
             required
           />
         </div>
@@ -177,7 +175,7 @@ export default function Register() {
           placeholder="Referral Code (optional)"
           value={referralCode}
           onChange={(e) => setReferralCode(e.target.value)}
-          className="w-full mb-4 p-3 rounded bg-gray-700 text-white"
+          className="w-full mb-4 p-3 rounded bg-gray-100 text-black focus:outline-none focus:ring-2 focus:ring-yellow-400"
         />
 
         <button
@@ -187,9 +185,9 @@ export default function Register() {
           Sign Up
         </button>
 
-        <p className="text-gray-400 text-sm mt-4">
+        <p className="text-gray-600 text-sm mt-4 text-center">
           Already have an account?{' '}
-          <Link to="/login" className="text-yellow-400 hover:underline">
+          <Link to="/login" className="text-yellow-500 hover:underline">
             Login here
           </Link>
         </p>

@@ -42,15 +42,22 @@ router.post('/admin-login', async (req, res) => {
     return res.status(400).json({ message: 'Invalid credentials' });
   }
 
-  // ✅ Use the SAME session flow as normal login
   req.session.userId = user._id;
   req.session.isAdmin = true;
 
-  res.json({ message: 'Admin login successful', user: {
-    id: user._id,
-    email: user.email,
-    isAdmin: true,
-  } });
+  // ✅ This ensures your session is written to Mongo before you respond:
+  req.session.save(err => {
+    if (err) {
+      console.error('Session save error:', err);
+      return res.status(500).json({ message: 'Session save failed.' });
+    }
+
+    console.log('Session saved:', req.session);
+    return res.json({
+      message: 'Admin login successful',
+      user: { id: user._id, email: user.email, isAdmin: true },
+    });
+  });
 });
 
 
