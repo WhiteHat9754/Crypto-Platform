@@ -23,7 +23,13 @@ router.get('/session', async (req, res) => {
   res.json({ user: {
     id: user._id,
     email: user.email,
-    isAdmin: !!req.session.isAdmin, // ✅ true for admins, false for normal
+    firstName: user.firstName,
+    lastName: user.lastName,
+    phone: user.phone,
+    countryCode: user.countryCode,
+    referralCode: user.referralCode || null,
+    kycStatus: user.kycStatus || 'not_verified',
+    isAdmin: !!req.session.isAdmin,
   } });
 });
 

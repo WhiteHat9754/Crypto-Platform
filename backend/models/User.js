@@ -36,6 +36,13 @@ const userSchema = new mongoose.Schema(
       TRX: { type: String, default: '' },
       ADA: { type: String, default: '' },
     },
+    
+    kycStatus: {
+      type: String,
+      enum: ['not_verified', 'pending', 'verified'],
+      default: 'not_verified',
+    },
+
   },
   { timestamps: true }
 );
