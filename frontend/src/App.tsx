@@ -11,6 +11,9 @@ import Register from './pages/Register';
 import LandingPage from './pages/LandingPage';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import TransferPage from './pages/TransferPage';
+import SwapPage from './pages/SwapPage';
+
 
 export default function App() {
   return (

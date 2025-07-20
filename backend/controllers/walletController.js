@@ -20,7 +20,7 @@ exports.getTransactions = async (req, res) => {
   res.json({ transactions });
 };
 
-// ✅ REAL createDeposit with NowPayments
+// ✅ Create deposit using NowPayments
 exports.createDeposit = async (req, res) => {
   const userId = req.session.userId;
   const { currency, amount } = req.body;
@@ -28,13 +28,12 @@ exports.createDeposit = async (req, res) => {
   if (!userId) return res.status(401).json({ message: 'Unauthorized' });
 
   try {
-    // ✅ Call NowPayments API
     const nowRes = await axios.post(
       'https://api.nowpayments.io/v1/invoice',
       {
         price_amount: amount,
-        price_currency: 'usd',   // Your base fiat
-        pay_currency: currency,  // e.g., 'btc'
+        price_currency: 'usd',
+        pay_currency: currency,
         order_id: `${userId}_${Date.now()}`,
         ipn_callback_url: 'https://yourdomain.com/api/wallet/nowpayments-webhook',
       },
@@ -42,13 +41,12 @@ exports.createDeposit = async (req, res) => {
         headers: {
           'x-api-key': process.env.NOWPAYMENTS_API_KEY,
           'Content-Type': 'application/json',
-        },
+        }
       }
     );
 
     const { pay_address, pay_amount, invoice_url, payment_id } = nowRes.data;
 
-    // ✅ Save real address + invoice + paymentId
     const tx = new Transaction({
       userId,
       type: 'deposit',
@@ -75,17 +73,12 @@ exports.createDeposit = async (req, res) => {
   }
 };
 
-// ✅ Webhook to mark deposit as completed
+// ✅ Webhook to confirm deposit
 exports.nowPaymentsWebhook = async (req, res) => {
   const { payment_id, payment_status, pay_currency } = req.body;
 
-  console.log('Webhook received:', req.body);
-
   const tx = await Transaction.findOne({ paymentId: payment_id });
-  if (!tx) {
-    console.log('No matching transaction found.');
-    return res.status(404).json({ message: 'Transaction not found' });
-  }
+  if (!tx) return res.status(404).json({ message: 'Transaction not found' });
 
   if (payment_status === 'finished') {
     tx.status = 'completed';
@@ -94,31 +87,25 @@ exports.nowPaymentsWebhook = async (req, res) => {
     await User.findByIdAndUpdate(tx.userId, {
       $inc: { [`balance.${tx.currency}`]: tx.amount },
     });
-
-    console.log(`Deposit completed: ${pay_currency} ${tx.amount}`);
   }
 
   res.json({ message: 'OK' });
 };
 
-// ✅ Withdraw stays the same
+// ✅ Withdraw
 exports.withdraw = async (req, res) => {
-  const userId = req.session.userId;  // or req.user.id if using JWT
+  const userId = req.session.userId;
   const { currency, amount, toAddress } = req.body;
 
   if (!userId) return res.status(401).json({ message: 'Unauthorized' });
 
   const user = await User.findById(userId);
-
-  if (user.balance[currency] < amount) {
+  if (user.balance[currency] < amount)
     return res.status(400).json({ message: 'Insufficient balance' });
-  }
 
-  // ✅ Deduct immediately so user can't double spend
   user.balance[currency] -= amount;
   await user.save();
 
-  // ✅ Save the withdrawal as pending
   const tx = new Transaction({
     userId,
     type: 'withdraw',
@@ -126,13 +113,96 @@ exports.withdraw = async (req, res) => {
     amount,
     address: toAddress,
     status: 'pending',
-    txHash: '',  // Will be filled after admin approval
   });
 
   await tx.save();
 
-  res.json({
-    message: 'Withdrawal requested. Awaiting admin approval.',
-    transaction: tx
+  res.json({ message: 'Withdrawal requested. Awaiting admin approval.', transaction: tx });
+};
+
+// ✅ Transfer crypto internally (user → user)
+exports.transfer = async (req, res) => {
+  const userId = req.session.userId;
+  const { toUsername, currency, amount } = req.body;
+
+  if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+  const sender = await User.findById(userId);
+  const receiver = await User.findOne({ username: toUsername });
+
+  if (!receiver) return res.status(404).json({ message: 'Recipient not found' });
+  if (sender.balance[currency] < amount)
+    return res.status(400).json({ message: 'Insufficient balance' });
+
+  sender.balance[currency] -= amount;
+  receiver.balance[currency] = (receiver.balance[currency] || 0) + amount;
+
+  await sender.save();
+  await receiver.save();
+
+  const tx = new Transaction({
+    userId,
+    type: 'transfer',
+    currency,
+    amount,
+    status: 'completed',
+    address: receiver._id.toString()
   });
+
+  await tx.save();
+
+  res.json({ message: 'Transfer successful', transaction: tx });
+};
+
+// ✅ Swap crypto within wallet
+exports.swap = async (req, res) => {
+  const userId = req.session.userId;
+  const { fromCoin, toCoin, amount } = req.body;
+
+  if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+  const user = await User.findById(userId);
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  if (!["BTC", "ETH", "USDT"].includes(fromCoin) || !["BTC", "ETH", "USDT"].includes(toCoin)) {
+    return res.status(400).json({ message: 'Unsupported coin' });
+  }
+
+  if (fromCoin === toCoin) {
+    return res.status(400).json({ message: 'Cannot swap same coin' });
+  }
+
+  const baseRates = {
+    BTC: { ETH: 15, USDT: 30000 },
+    ETH: { BTC: 0.066, USDT: 2000 },
+    USDT: { BTC: 0.000033, ETH: 0.0005 },
+  };
+
+  const rate = baseRates[fromCoin][toCoin];
+  const feeMultiplier = 0.995;
+  const finalRate = rate * feeMultiplier;
+
+  if (user.balance[fromCoin] < amount)
+    return res.status(400).json({ message: 'Insufficient balance' });
+
+  const received = amount * finalRate;
+
+  user.balance[fromCoin] -= amount;
+  user.balance[toCoin] = (user.balance[toCoin] || 0) + received;
+
+  await user.save();
+
+  const tx = new Transaction({
+    userId,
+    type: 'swap',
+    fromCoin,
+    toCoin,
+    amount,
+    receivedAmount: received,
+    status: 'completed',
+  });
+
+  await tx.save();
+
+  res.json({ message: 'Swap successful', receivedAmount: received, transaction: tx });
 };

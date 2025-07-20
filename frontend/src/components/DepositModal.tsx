@@ -10,7 +10,9 @@ export default function DepositModal({
   coins: any[];
 }) {
   const [currency, setCurrency] = useState(coins[0]?.symbol || 'BTC');
-  const [amount, setAmount] = useState(50);
+  const [amount, setAmount] = useState('');
+  const [inputMode, setInputMode] = useState<'crypto' | 'usd'>('usd');
+  const [price, setPrice] = useState(1);
   const [address, setAddress] = useState('');
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -19,16 +21,16 @@ export default function DepositModal({
   const generateAddress = async () => {
     setLoading(true);
     try {
+      const amt = inputMode === 'crypto' ? parseFloat(amount) * price : parseFloat(amount);
       const res = await axios.post(
         'http://localhost:5000/api/payments/create',
-        { currency, amount },
+        { currency, amount: amt },
         { withCredentials: true }
       );
-      console.log('✅ Backend response:', res.data);
       setAddress(res.data.address);
-      setShowAddressOnly(true); // ✅ Switch to show only address input
+      setShowAddressOnly(true);
     } catch (err) {
-      console.error('❌ Error generating address:', err);
+      console.error('Error generating address:', err);
     } finally {
       setLoading(false);
     }
@@ -44,22 +46,18 @@ export default function DepositModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="relative bg-[#1E2329] p-6 rounded shadow-lg w-full max-w-md">
-        {/* Close icon */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white"
-        >
+      <div className="relative bg-white p-6 rounded shadow-lg w-full max-w-md text-gray-900">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-black">
           <XMarkIcon className="w-6 h-6" />
         </button>
 
-        <h2 className="text-xl mb-6 text-yellow-400 font-bold">Deposit Crypto</h2>
+        <h2 className="text-xl mb-6 text-yellow-500 font-bold">Deposit Crypto</h2>
 
         {!showAddressOnly ? (
           <>
-            <label className="block mb-2 text-sm">Select Coin</label>
+            <label className="block mb-2 text-sm font-medium">Select Coin</label>
             <select
-              className="w-full mb-4 p-2 rounded bg-gray-700 text-white"
+              className="w-full mb-4 p-2 rounded border bg-white text-gray-900"
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
             >
@@ -70,45 +68,64 @@ export default function DepositModal({
               ))}
             </select>
 
-            <label className="block mb-2 text-sm">Amount (USD)</label>
-            <input
-              type="text"
-              inputMode="decimal"
-              value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full mb-4 p-2 rounded bg-gray-700 text-white"
-            />
+            <label className="block mb-2 text-sm font-medium">Amount</label>
+            <div className="relative mb-4">
+              <input
+                type="number"
+                inputMode="decimal"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="w-full p-2 rounded border text-gray-900 pr-20 no-spinner"
+                placeholder={inputMode === 'crypto' ? 'Amount in crypto' : 'Amount in USD'}
+              />
+              <button
+                type="button"
+                onClick={() => setInputMode(inputMode === 'crypto' ? 'usd' : 'crypto')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-sm bg-gray-100 border rounded hover:bg-gray-200"
+              >
+                {inputMode === 'crypto' ? 'USD' : 'Crypto'}
+              </button>
+            </div>
 
             <button
               onClick={generateAddress}
               disabled={loading}
-              className="w-full px-4 py-2 bg-yellow-400 text-black rounded font-semibold hover:bg-yellow-500 transition"
+              className="w-full px-4 py-2 bg-yellow-400 text-black rounded font-semibold hover:bg-yellow-500"
             >
               {loading ? 'Generating...' : 'Generate Address'}
             </button>
           </>
         ) : (
           <>
-            <label className="block mb-2 text-sm">Your Deposit Address</label>
+            <label className="block mb-2 text-sm font-medium">Your Deposit Address</label>
             <div className="relative">
               <input
                 type="text"
                 readOnly
                 value={address}
                 onClick={copyAddress}
-                className="w-full p-2 rounded bg-gray-700 text-white cursor-pointer"
+                className="w-full p-2 rounded border bg-gray-100 text-gray-900 cursor-pointer"
               />
               {copied && (
-                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-400 text-xs">
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-xs">
                   Copied!
                 </span>
               )}
             </div>
-            <p className="text-xs text-gray-400 mt-2">
-              Click address to copy to clipboard.
-            </p>
+            <p className="text-xs text-gray-500 mt-2">Click to copy address.</p>
           </>
         )}
+
+        <style>{`
+          input.no-spinner::-webkit-outer-spin-button,
+          input.no-spinner::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+          input.no-spinner {
+            -moz-appearance: textfield;
+          }
+        `}</style>
       </div>
     </div>
   );

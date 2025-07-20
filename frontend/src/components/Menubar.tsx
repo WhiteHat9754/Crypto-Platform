@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/menubar.css'; 
 
 export default function Menubar() {
   const navigate = useNavigate();
@@ -53,47 +52,66 @@ export default function Menubar() {
   };
 
   return (
-    <nav
-      className={`menubar fixed top-0 left-0 w-full z-50 transition-transform duration-300 ${
-        show ? 'translate-y-0' : '-translate-y-full md:translate-y-0'
-      }`}
-    >
-      <div className="menubar-logo">Whitestone Capital</div>
+<nav className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-white/70 border-b border-gray-200 shadow-sm">
+  <div className=" mx-auto flex items-center justify-between px-6 py-3">
+    {/* ✅ Logo LEFT */}
+    <Link to="/" className="text-xl font-bold text-gray-900">
+      Whitestone Capital
+    </Link>
 
-      <div className="menubar-links">
-        {isLoggedIn && (
+    {/* ✅ Links RIGHT */}
+    <div className="flex items-center gap-4 ml-auto">
+      {isLoggedIn && (
+        <>
           <Link
             to="/dashboard"
-            className={`menubar-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+              location.pathname === '/dashboard'
+                ? 'bg-yellow-400 text-black'
+                : 'text-gray-800 hover:bg-gray-200'
+            }`}
           >
             Dashboard
           </Link>
-        )}
-
-        {isLoggedIn ? (
-          <>
-            <Link
-              to="/wallet"
-              className={`menubar-link ${location.pathname === '/wallet' ? 'active' : ''}`}
-            >
-              Wallet
-            </Link>
-            <Link
-              to="/profile"
-              className={`menubar-link ${location.pathname === '/profile' ? 'active' : ''}`}
-            >
-              Profile
-            </Link>
-            <button onClick={handleLogout} className="menubar-button">
-              Logout
-            </button>
-          </>
-        ) : (
-          <Link to="/login" className="menubar-button">
-            Login / SignUp
+          <Link
+            to="/wallet"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+              location.pathname === '/wallet'
+                ? 'bg-yellow-400 text-black'
+                : 'text-gray-800 hover:bg-gray-200'
+            }`}
+          >
+            Wallet
           </Link>
-        )}
-      </div>
-    </nav>
+          <Link
+            to="/profile"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+              location.pathname === '/profile'
+                ? 'bg-yellow-400 text-black'
+                : 'text-gray-800 hover:bg-gray-200'
+            }`}
+          >
+            Profile
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 rounded-full text-sm font-semibold bg-black text-yellow-400 hover:bg-gray-900 transition"
+          >
+            Logout
+          </button>
+        </>
+      )}
+      {!isLoggedIn && (
+        <Link
+          to="/login"
+          className="px-4 py-2 rounded-full text-sm font-semibold bg-yellow-400 text-black hover:bg-yellow-500 transition"
+        >
+          Login / SignUp
+        </Link>
+      )}
+    </div>
+  </div>
+</nav>
+
   );
 }

@@ -6,6 +6,7 @@ const MongoStore = require('connect-mongo');
 const connectDB = require('./config/db');
 const walletRoutes = require('./routes/wallet');
 const adminRoutes = require('./routes/admin');
+const swapRoutes = require('./routes/swapRoutes');
 
 dotenv.config();
 connectDB();
@@ -43,6 +44,8 @@ app.use('/api/user', require('./routes/user'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/wallet', walletRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/wallet/swap', swapRoutes);
+
 
 
 

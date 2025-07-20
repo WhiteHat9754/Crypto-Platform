@@ -4,6 +4,7 @@ import axios from 'axios';
 import DepositModal from '../components/DepositModal';
 import WithdrawModal from '../components/WithdrawModal';
 import TransferModal from '../components/TransferModal';
+import SwapModal from '../components/SwapModal';
 import RecentTransactions from '../components/RecentTransactions';
 
 interface WalletItem {
@@ -26,15 +27,14 @@ export default function Wallet() {
   const [isDepositOpen, setDepositOpen] = useState(false);
   const [isWithdrawOpen, setWithdrawOpen] = useState(false);
   const [isTransferOpen, setTransferOpen] = useState(false);
+  const [isSwapOpen, setSwapOpen] = useState(false);
 
-  // ✅ ALWAYS define your supported coins list
   const supportedCoins = [
     { symbol: 'BTC', name: 'Bitcoin', image: '/icons/btc.png' },
     { symbol: 'ETH', name: 'Ethereum', image: '/icons/eth.png' },
     { symbol: 'USDT', name: 'Tether', image: '/icons/usdt.png' },
     { symbol: 'SOL', name: 'Solana', image: '/icons/sol.png' },
     { symbol: 'DOGE', name: 'Dogecoin', image: '/icons/doge.png' },
-    // Add more coins as needed
   ];
 
   useEffect(() => {
@@ -98,39 +98,45 @@ export default function Wallet() {
 
   return (
     <main className="max-w-7xl mx-auto py-10 px-4 bg-white min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900">💰 My Wallet</h1>
+      <h1 className="text-4xl font-bold mb-8 text-gray-900">My Crypto Wallet</h1>
 
       {/* Portfolio summary */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg shadow p-6 mb-8">
-        <h2 className="text-lg font-semibold mb-2 text-gray-800">Portfolio Balance</h2>
-        <p className="text-4xl font-bold text-yellow-500">${totalBalance.toFixed(2)}</p>
+      <div className="bg-gradient-to-tr from-yellow-100 to-yellow-200 rounded-xl p-6 mb-10 shadow-lg">
+        <h2 className="text-xl font-semibold text-gray-800 mb-1">Total Portfolio Value</h2>
+        <p className="text-5xl font-bold text-yellow-600">${totalBalance.toFixed(2)}</p>
       </div>
 
-      {/* Actions */}
-      <div className="flex flex-wrap gap-4 mb-8">
+      {/* Action Buttons */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4 mb-10">
         <button
           onClick={() => setDepositOpen(true)}
-          className="bg-yellow-400 text-black px-6 py-2 rounded-full font-semibold shadow hover:bg-yellow-500"
+          className="bg-yellow-400 text-black py-3 rounded-xl font-semibold shadow hover:bg-yellow-500 transition"
         >
           ➕ Deposit
         </button>
         <button
           onClick={() => setWithdrawOpen(true)}
-          className="bg-gray-100 px-6 py-2 rounded-full font-semibold shadow hover:bg-gray-200"
+          className="bg-gray-100 text-gray-800 py-3 rounded-xl font-semibold shadow hover:bg-gray-200 transition"
         >
           ➖ Withdraw
         </button>
         <button
           onClick={() => setTransferOpen(true)}
-          className="bg-gray-100 px-6 py-2 rounded-full font-semibold shadow hover:bg-gray-200"
+          className="bg-blue-100 text-blue-700 py-3 rounded-xl font-semibold shadow hover:bg-blue-200 transition"
         >
           🔄 Transfer
         </button>
+        <button
+          onClick={() => setSwapOpen(true)}
+          className="bg-green-600 text-white py-3 rounded-xl font-semibold shadow hover:bg-green-700 transition"
+        >
+          🔁 Swap
+        </button>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-        <label className="flex items-center gap-2 text-sm text-gray-700">
+      {/* Filter/Search */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <label className="text-sm text-gray-700 flex items-center gap-2">
           <input
             type="checkbox"
             checked={showOnlyWithBalance}
@@ -138,55 +144,49 @@ export default function Wallet() {
           />
           Show only coins with balance
         </label>
-
         <input
           type="text"
           placeholder="Search coin..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="p-2 rounded border border-gray-300 w-full md:w-64 text-gray-900"
+          className="px-4 py-2 rounded border border-gray-300 w-full md:w-72"
         />
       </div>
 
-      {/* Coins table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 rounded-lg shadow-sm">
-          <thead className="bg-gray-100 text-gray-700 text-sm">
-            <tr>
-              <th className="p-3 text-left">Coin</th>
-              <th className="p-3 text-right">Total</th>
-              <th className="p-3 text-right">Available</th>
-              <th className="p-3 text-right">In Order</th>
-              <th className="p-3 text-right">Value (USD)</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white text-gray-800">
-            {filteredWallet.map((coin) => (
-              <tr key={coin.symbol} className="border-t border-gray-200 hover:bg-gray-50">
-                <td className="flex items-center gap-2 p-3">
-                  <img src={coin.image} alt={coin.symbol} className="w-6 h-6" />
-                  <span className="font-semibold">{coin.symbol}</span>
-                  <span className="text-xs text-gray-500">({coin.name})</span>
-                </td>
-                <td className="p-3 text-right">{coin.amount.toFixed(8)}</td>
-                <td className="p-3 text-right">{coin.available.toFixed(8)}</td>
-                <td className="p-3 text-right">{coin.inOrder.toFixed(8)}</td>
-                <td className="p-3 text-right">${coin.usdValue.toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Wallet Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {filteredWallet.map((coin) => (
+          <div
+            key={coin.symbol}
+            className="bg-white border border-gray-200 rounded-xl p-4 shadow hover:shadow-md transition"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <img src={coin.image} alt={coin.symbol} className="w-8 h-8" />
+              <div>
+                <div className="text-lg font-semibold text-gray-800">{coin.symbol}</div>
+                <div className="text-sm text-gray-500">{coin.name}</div>
+              </div>
+            </div>
+            <div className="text-sm text-gray-600 mb-1">Total: {coin.amount.toFixed(8)}</div>
+            <div className="text-sm text-gray-600 mb-1">Available: {coin.available.toFixed(8)}</div>
+            <div className="text-sm text-gray-600 mb-1">In Order: {coin.inOrder.toFixed(8)}</div>
+            <div className="text-md font-semibold text-green-600 mt-2">
+              ${coin.usdValue.toFixed(2)}
+            </div>
+          </div>
+        ))}
       </div>
 
       {filteredWallet.length === 0 && (
-        <div className="text-center py-20 text-gray-600">
-          No assets found.
-        </div>
+        <div className="text-center py-20 text-gray-600">No assets found.</div>
       )}
 
-      <RecentTransactions />
+      {/* Recent transactions */}
+      <div className="mt-10">
+        <RecentTransactions />
+      </div>
 
-      {/* ✅ Pass supportedCoins so DepositModal never empty */}
+      {/* Modals */}
       {isDepositOpen && (
         <DepositModal onClose={() => setDepositOpen(false)} coins={supportedCoins} />
       )}
@@ -195,6 +195,9 @@ export default function Wallet() {
       )}
       {isTransferOpen && (
         <TransferModal onClose={() => setTransferOpen(false)} coins={supportedCoins} />
+      )}
+      {isSwapOpen && (
+        <SwapModal onClose={() => setSwapOpen(false)} coins={supportedCoins} isOpen={true} />
       )}
     </main>
   );
