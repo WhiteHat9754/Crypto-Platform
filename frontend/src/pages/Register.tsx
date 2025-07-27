@@ -95,7 +95,7 @@ export default function Register() {
         onSubmit={handleSubmit}
         className="backdrop-blur-lg bg-white/60 border border-white/40 shadow-xl rounded-xl p-8 w-full max-w-md"
       >
-        <h2 className="text-3xl mb-6 text-yellow-500 font-bold text-center">Register</h2>
+        <h2 className="text-3xl mb-6 text-yellow-500 font-bold text-center">Quota Flow</h2>
 
         <input
           type="text"

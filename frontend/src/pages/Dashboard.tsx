@@ -64,7 +64,7 @@ export default function Dashboard() {
   return (
     <main className="main-wrapper bg-white">
       {/* <h2 className="heading-primary mb-6">
-        Whitestone Capital
+        Quota Flow
       </h2> */}
 
       {/* Wallet cards */}

@@ -58,7 +58,7 @@ export default function Login() {
         className="backdrop-blur-lg bg-white/60 border border-white/40 shadow-xl rounded-xl p-8 w-full max-w-md"
       >
         <h2 className="text-3xl mb-6 text-yellow-500 font-bold text-center">
-          Login
+          Quota Flow
         </h2>
 
         <input

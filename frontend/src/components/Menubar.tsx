@@ -55,8 +55,8 @@ export default function Menubar() {
 <nav className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-white/70 border-b border-gray-200 shadow-sm">
   <div className=" mx-auto flex items-center justify-between px-6 py-3">
     {/* ✅ Logo LEFT */}
-    <Link to="/" className="text-xl font-bold text-gray-900">
-      Whitestone Capital
+    <Link to="/" className="text-xl font-bold text-yellow-500">
+      Quota Flow
     </Link>
 
     {/* ✅ Links RIGHT */}

@@ -24,10 +24,10 @@ export default function LandingPage() {
         <header className="relative bg-gray-100">
           <div className="max-w-7xl mx-auto px-4 py-16 text-center">
             <h1 className="text-3xl md:text-4xl font-extrabold mb-4">
-              Trade Crypto with Confidence
+              Trade with Confidence
             </h1>
             <p className="text-base md:text-lg max-w-2xl mx-auto text-gray-600">
-              Whitestone Capital is your gateway to secure, fast, and trusted crypto trading.
+              Quota Flow is your gateway to secure, fast, and trusted Trading.
             </p>
           </div>
         </header>
@@ -136,7 +136,7 @@ export default function LandingPage() {
 
       {/* ✅ Sticky Footer */}
       <footer className="text-center text-sm py-6 border-t">
-        &copy; 2025 Whitestone Capital — Secure Your Future.
+        &copy; 2025 Quota Flow — Secure Your Future.
       </footer>
     </div>
   );
