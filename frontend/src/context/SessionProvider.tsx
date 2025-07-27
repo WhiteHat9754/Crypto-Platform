@@ -1,12 +1,25 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  countryCode: string;
+  isEmailVerified: boolean;
+  isKycVerified: boolean;
+  role: string;
+}
+
 interface SessionContextType {
   isLoading: boolean;
   isLoggedIn: boolean;
-  user: any;
+  user: User | null;
   reloadSession: () => Promise<void>;
-  loginSession: (user: any) => void; 
+  loginSession: (user: User) => void;
+  logoutSession: () => void;
 }
 
 const SessionContext = createContext<SessionContextType>({
@@ -15,6 +28,7 @@ const SessionContext = createContext<SessionContextType>({
   user: null,
   reloadSession: async () => {},
   loginSession: () => {},
+  logoutSession: () => {},
 });
 
 export const useSession = () => useContext(SessionContext);
@@ -22,32 +36,66 @@ export const useSession = () => useContext(SessionContext);
 export const SessionProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  const reloadSession = async () => {
-    setIsLoading(true);
+// Add to your SessionProvider.tsx
+const reloadSession = async () => {
+  setIsLoading(true);
+  try {
+    // Try user session first
+    let res;
     try {
-      const res = await axios.get('http://localhost:5000/api/auth/session', {
+      res = await axios.get('http://localhost:5000/api/user/profile', {
         withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
       });
-      if (res.data?.user) {
-        setIsLoggedIn(true);
-        setUser(res.data.user);
-      } else {
+    } catch (userError) {
+      // If user session fails, try admin session
+      try {
+        res = await axios.get('http://localhost:5000/api/admin/profile', {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+      } catch (adminError) {
+        console.log('❌ No valid session found');
         setIsLoggedIn(false);
         setUser(null);
+        setIsLoading(false);
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      setIsLoggedIn(false);
-      setUser(null);
     }
+    
+    if (res.data?.success && res.data?.data) {
+      setIsLoggedIn(true);
+      setUser(res.data.data);
+      console.log('✅ User session loaded:', res.data.data);
+    }
+  } catch (err: any) {
+    console.error('❌ Session reload error:', err);
+    setIsLoggedIn(false);
+    setUser(null);
+  }
+  setIsLoading(false);
+};
+
+
+  const loginSession = (userData: User) => {
+    console.log('✅ Login session called with:', userData);
+    setIsLoggedIn(true);
+    setUser(userData);
     setIsLoading(false);
   };
 
-  const loginSession = (user: any) => {
-    setIsLoggedIn(true);
-    setUser(user);
+  const logoutSession = () => {
+    console.log('✅ Logout session called');
+    setIsLoggedIn(false);
+    setUser(null);
     setIsLoading(false);
   };
 
@@ -57,7 +105,14 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
 
   return (
     <SessionContext.Provider
-      value={{ isLoading, isLoggedIn, user, reloadSession, loginSession }}
+      value={{
+        isLoading,
+        isLoggedIn,
+        user,
+        reloadSession,
+        loginSession,
+        logoutSession,
+      }}
     >
       {children}
     </SessionContext.Provider>
